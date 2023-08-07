@@ -1,13 +1,16 @@
 const { hashPassword, comparePassword } = require("../utils/hashAndCompare");
-const { registerQuery, userCountQuery, loginQuery, getSingleUserQuery, updateUserQuery, deleteUserQuery, showUsers } = require("../models/userModel");
+const { registerQuery, userCountQuery, loginQuery, getSingleUserQuery, getSingleUserToVerifyQuery, updateUserQuery, deleteUserQuery, showUsers } = require("../models/userModel");
+const { getMyRecipeQuery } = require("../models/recipeModel");
 const { createAccessToken } = require("../utils/jwt");
 const { validationInput } = require("../utils/validationInput");
+const sendVerificationEmail = require("../utils/sendVerficationEmail");
 const { StatusCodes } = require("http-status-codes");
 const { UnauthenticatedError, NotFoundError, BadRequestError } = require("../error");
 const { validationResult } = require("express-validator");
+const cloudinary = require("cloudinary").v2;
 
 const register = async (req, res) => {
-  const { password } = req.body;
+  const { password, name, email } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     validationInput({ errors });
@@ -20,10 +23,27 @@ const register = async (req, res) => {
   }
   let hashPass = await hashPassword(password);
   req.body.password = hashPass;
+  req.body.isVerified = false;
   await registerQuery(req.body);
+  await sendVerificationEmail({ name, email });
   res.status(StatusCodes.CREATED).json({ msg: "sukses terdaftar" });
 };
-
+const verifyEmail = async (req, res) => {
+  const { email } = req.query;
+  const user = await getSingleUserToVerifyQuery(email);
+  console.log(user);
+  const data = {
+    name: user.rows[0].name,
+    email: user.rows[0].email,
+    phone: user.rows[0].phone,
+    password: user.rows[0].password,
+    isVerified: true,
+    id: user.rows[0].id,
+  };
+  let result = await updateUserQuery(data);
+  console.log(result);
+  res.status(StatusCodes.OK).json({ msg: "berhasil terupdate" });
+};
 const login = async (req, res) => {
   const { email, password } = req.body;
   const errors = validationResult(req);
@@ -76,6 +96,7 @@ const updateUser = async (req, res) => {
     email: email || user.rows[0].email,
     phone: phone || user.rows[0].phone,
     password: req.body.password || user.rows[0].password,
+    isVerified: user.rows[0].isVerified,
     id,
   };
   let result = await updateUserQuery(data);
@@ -85,6 +106,12 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id } = req.user;
+  const data = { search: "", searchBy: "title", offset: (1 - 1) * 5, limit: 5, id: parseInt(id), sort: "ASC" };
+  const myRecipe = await getMyRecipeQuery(data);
+  const { rows } = myRecipe;
+  rows.map(async (row) => {
+    await cloudinary.uploader.destroy(row.public_id);
+  });
   await deleteUserQuery(parseInt(id));
   res.status(StatusCodes.OK).json({ msg: "user terhapus" });
 };
@@ -106,4 +133,4 @@ const showAllUsers = async (req, res) => {
   res.status(StatusCodes.OK).json({ data: users.rows });
 };
 
-module.exports = { register, login, cekDuplikatPost, getSingleUser, updateUser, deleteUser, showAllUsers };
+module.exports = { verifyEmail, register, login, cekDuplikatPost, getSingleUser, updateUser, deleteUser, showAllUsers };

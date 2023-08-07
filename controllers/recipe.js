@@ -75,25 +75,29 @@ const getRecipeById = async (req, res) => {
 const createRecipe = async (req, res) => {
   const { title, ingredients, category_id } = req.body;
   const photo = req.file;
+  let result;
+  let photoDefault = "https://res.cloudinary.com/drfpp55bm/image/upload/v1691246846/file-upload/20826761_6354072_amqr2a.jpg";
+  let public_idDefault = "file-upload/20826761_6354072_amqr2a.jpg";
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     validationInput({ errors });
   }
-  let type = photo.mimetype.split("/")[1];
-  console.log(type);
-  if (type.toLowerCase() != "png" && type.toLowerCase() != "jpg" && type != "jpeg") {
-    throw new BadRequestError("file foto tidak sesuai");
+  if (photo) {
+    let type = photo.mimetype.split("/")[1];
+    if (type.toLowerCase() != "png" && type.toLowerCase() != "jpg" && type != "jpeg") {
+      throw new BadRequestError("file foto tidak sesuai");
+    }
+    result = await cloudinary.uploader.upload(photo.path, {
+      use_filename: true,
+      folder: "file-upload",
+    });
   }
-  const result = await cloudinary.uploader.upload(photo.path, {
-    use_filename: true,
-    folder: "file-upload",
-  });
 
   let data = {
     title,
     ingredients,
-    photo: result.secure_url,
-    public_id: result.public_id,
+    photo: result?.secure_url || photoDefault,
+    public_id: result?.public_id || public_idDefault,
     category_id: parseInt(category_id),
     user_id: parseInt(req.user.id),
   };

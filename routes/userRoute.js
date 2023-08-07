@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body, check } = require("express-validator");
 const { authenticateUser } = require("../middlewares/authentication");
-const { register, login, cekDuplikatPost, getSingleUser, updateUser, deleteUser, showAllUsers } = require("../controllers/user");
+const { register, login, cekDuplikatPost, getSingleUser, updateUser, deleteUser, showAllUsers, verifyEmail } = require("../controllers/user");
 
 router.post(
   "/register",
@@ -65,5 +65,6 @@ router.put(
   updateUser
 );
 router.delete("/deleteUser", authenticateUser, deleteUser);
+router.get("/verify-email", verifyEmail);
 
 module.exports = router;

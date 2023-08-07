@@ -47,6 +47,8 @@ INSERT INTO category(name) VALUES('appetizer');
 ALTER TABLE recipe ADD COLUMN user_id INT NOT NULL;
 ALTER TABLE recipe ADD COLUMN public_id VARCHAR NOT NULL;
 
+--buat kolom isVerified di table user
+ALTER TABLE users ADD COLUMN isVerified BOOLEAN NOT NULL;
 --buat kolom created_At di table recipe
 ALTER TABLE recipe ADD COLUMN created_At DATE NOT NULL;
 
