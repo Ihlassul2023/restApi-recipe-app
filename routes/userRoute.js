@@ -3,6 +3,17 @@ const router = express.Router();
 const { body, check } = require("express-validator");
 const { authenticateUser } = require("../middlewares/authentication");
 const { register, login, cekDuplikatPost, getSingleUser, updateUser, deleteUser, showAllUsers, verifyEmail } = require("../controllers/user");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({
+  storage,
+});
 
 router.post(
   "/register",
@@ -14,7 +25,7 @@ router.post(
     return true;
   }),
   body("password").custom((value) => {
-    if (value.length <= 8) {
+    if (value?.length <= 8) {
       throw new Error("panjang password harus lebih dari 8");
     }
     return true;
@@ -32,10 +43,12 @@ router.get("/showUser", authenticateUser, getSingleUser);
 router.get("/showAllUsers", authenticateUser, showAllUsers);
 router.put(
   "/updateUser",
-  body("email").custom(async (value) => {
+  authenticateUser,
+  upload.single("photo_user"),
+  body("email").custom(async (value, { req }) => {
     if (value) {
       const validEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-      const duplikat = await cekDuplikatPost(value);
+      const duplikat = await cekDuplikatPost(value, req.user.id);
       if (duplikat) {
         throw new Error("email sudah terdaftar!");
       } else if (!value.match(validEmail)) {
@@ -61,10 +74,9 @@ router.put(
     }
     return true;
   }),
-  authenticateUser,
   updateUser
 );
 router.delete("/deleteUser", authenticateUser, deleteUser);
-router.get("/verify-email", verifyEmail);
+router.get("/verify/:id", verifyEmail);
 
 module.exports = router;

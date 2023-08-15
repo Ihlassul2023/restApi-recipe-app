@@ -2,8 +2,8 @@ const Pool = require("../db/db");
 
 const registerQuery = (data) => {
   return new Promise((resolve, reject) => {
-    const { name, email, phone, password, role, isVerified } = data;
-    Pool.query(`insert into users(name,email,phone,password,role,isVerified) values('${name}','${email}','${phone}','${password}','${role}','${isVerified}')`, (err, result) => {
+    const { name, email, phone, password, role, isVerified, checker } = data;
+    Pool.query(`insert into users(name,email,phone,password,role,isVerified,checker) values('${name}','${email}','${phone}','${password}','${role}','${isVerified}', '${checker}')`, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
@@ -37,7 +37,19 @@ const loginQuery = ({ email }) => {
 };
 const getSingleUserQuery = (id) => {
   return new Promise((resolve, reject) =>
-    Pool.query(`SELECT users.name,users.email,users.phone,users.role FROM users WHERE id=${parseInt(id)}`, (err, result) => {
+    Pool.query(`SELECT * FROM users WHERE id=${parseInt(id)}`, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    })
+  );
+};
+const activatedUser = async (uuid) => {
+  console.log("model activate");
+  return new Promise((resolve, reject) =>
+    Pool.query(`UPDATE users SET isverified=true WHERE checker='${uuid}'`, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
@@ -59,9 +71,9 @@ const getSingleUserToVerifyQuery = (email) => {
 };
 
 const updateUserQuery = (data) => {
-  const { name, email, phone, password, id, isVerified } = data;
+  const { name, email, phone, password, id, isVerified, photo_user, public_id } = data;
   return new Promise((resolve, reject) => {
-    Pool.query(`UPDATE users SET name='${name}', email='${email}', phone = '${phone}', password='${password}', isVerified = ${isVerified} WHERE id=${parseInt(id)}`, (err, result) => {
+    Pool.query(`UPDATE users SET name='${name}', email='${email}', phone = '${phone}', password='${password}', isVerified = ${isVerified}, photo_user='${photo_user}', public_id='${public_id}' WHERE id=${parseInt(id)}`, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
@@ -92,4 +104,4 @@ const showUsers = () => {
     });
   });
 };
-module.exports = { registerQuery, userCountQuery, loginQuery, showUsers, updateUserQuery, getSingleUserQuery, getSingleUserToVerifyQuery, deleteUserQuery };
+module.exports = { registerQuery, userCountQuery, loginQuery, showUsers, updateUserQuery, getSingleUserQuery, getSingleUserToVerifyQuery, deleteUserQuery, activatedUser };

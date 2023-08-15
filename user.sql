@@ -1,5 +1,5 @@
 -- Active: 1689920741111@@147.139.210.135@5432@ihlas01
-DELETE FROM recipe WHERE id = 4;
+DELETE FROM users WHERE id = 26;
 
 SELECT * FROM users;
 
@@ -49,8 +49,14 @@ ALTER TABLE recipe ADD COLUMN public_id VARCHAR NOT NULL;
 
 --buat kolom isVerified di table user
 ALTER TABLE users ADD COLUMN isVerified BOOLEAN NOT NULL;
+--buat kolom photo di table user
+ALTER TABLE users ADD COLUMN photo_user VARCHAR;
+--buat kolom public_id di table user
+ALTER TABLE users ADD COLUMN public_id VARCHAR;
 --buat kolom created_At di table recipe
 ALTER TABLE recipe ADD COLUMN created_At DATE NOT NULL;
+
+ALTER TABLE users ADD COLUMN checker VARCHAR;
 
 ALTER TABLE recipe
 ALTER COLUMN created_At TYPE TIMESTAMP ;
@@ -66,5 +72,7 @@ ALTER TABLE recipe ADD FOREIGN KEY (category_id) REFERENCES category(id) ON DELE
 
 --menampilkan table recipe
 SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, recipe.user_id, category.name AS category FROM recipe JOIN category ON recipe.category_id = category.id WHERE user_id = 7 AND title LIKE '%%';
+
+SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, recipe.created_at AS created, category.name AS category,users.name AS author FROM recipe JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id;
 
 -- ,users.name AS users FROM recipe JOIN users ON recipe.user_id = users.id WHERE user_id ILIKE '%1%'

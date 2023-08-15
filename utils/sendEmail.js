@@ -5,7 +5,7 @@ const sendEmail = async ({ to, subject, html }) => {
   const transporter = nodemailer.createTransport(nodemailerConfig);
 
   return transporter.sendMail({
-    from: '"ihlas sul akbar" <ihlasakbar00@gmail.com>',
+    from: process.env.USER_NODEMAILER,
     to,
     subject,
     html,

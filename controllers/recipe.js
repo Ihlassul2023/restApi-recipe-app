@@ -79,13 +79,14 @@ const createRecipe = async (req, res) => {
   let photoDefault = "https://res.cloudinary.com/drfpp55bm/image/upload/v1691246846/file-upload/20826761_6354072_amqr2a.jpg";
   let public_idDefault = "file-upload/20826761_6354072_amqr2a.jpg";
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    validationInput({ errors });
-  }
+  !errors.isEmpty() && validationInput({ errors });
   if (photo) {
     let type = photo.mimetype.split("/")[1];
     if (type.toLowerCase() != "png" && type.toLowerCase() != "jpg" && type != "jpeg") {
       throw new BadRequestError("file foto tidak sesuai");
+    }
+    if (photo.size > 1024 * 1024) {
+      throw new BadRequestError("ukuran gambar harus lebih kecil dari 1MB");
     }
     result = await cloudinary.uploader.upload(photo.path, {
       use_filename: true,
@@ -101,7 +102,6 @@ const createRecipe = async (req, res) => {
     category_id: parseInt(category_id),
     user_id: parseInt(req.user.id),
   };
-
   await postRecipeQuery(data);
   return res.status(StatusCodes.CREATED).json({ msg: "success", data });
 };
@@ -143,7 +143,7 @@ const updateRecipe = async (req, res) => {
     };
 
     await putRecipeQuery(data);
-    res.status(StatusCodes.OK).json({ msg: "berhasil terupdate" });
+    res.status(StatusCodes.OK).json({ msg: "berhasil diedit" });
   } else {
     throw new UnauthenticatedError("kredensial tidak valid");
   }
