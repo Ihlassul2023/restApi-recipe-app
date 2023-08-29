@@ -26,7 +26,7 @@ const register = async (req, res) => {
   let hashPass = await hashPassword(password);
   let uuid = uuidv4();
   req.body.password = hashPass;
-  req.body.isVerified = false;
+  req.body.isVerified = true;
   req.body.checker = uuid;
   await registerQuery(req.body);
   // await sendVerificationEmail({ name, uuid, email });
