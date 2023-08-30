@@ -21,7 +21,7 @@ const getMyRecipeQuery = async (data) => {
   const { search, searchBy, offset, limit, id, sort } = data;
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo,recipe.public_id, category.name AS category,users.name AS author FROM recipe JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE user_id = ${id} AND ${searchBy} ILIKE '%${search}%' OFFSET ${offset} LIMIT ${limit}`,
+      `SELECT recipe.id,recipe.category_id, recipe.title, recipe.ingredients, recipe.photo,recipe.public_id, category.name AS category,users.name AS author FROM recipe JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE user_id = ${id} AND ${searchBy} ILIKE '%${search}%' OFFSET ${offset} LIMIT ${limit}`,
       (err, result) => {
         if (!err) {
           resolve(result);
