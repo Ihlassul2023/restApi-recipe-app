@@ -44,7 +44,7 @@ const getMyRecipe = async (req, res) => {
     search: search || "",
     searchBy: searchBy || "title",
     offset: (page - 1) * limiter,
-    limit: limit || 5,
+    limit: limit || 15,
     sort: sort || "ASC",
     id: parseInt(id),
   };
