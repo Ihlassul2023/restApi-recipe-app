@@ -9,7 +9,7 @@ const getAllRecipe = async (req, res) => {
   const { search, searchBy, limit, sort } = req.query;
 
   let page = req.query.page || 1;
-  let limiter = limit || 15;
+  let limiter = limit || 5;
 
   data = {
     search: search || "",
