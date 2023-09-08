@@ -1,4 +1,4 @@
--- Active: 1689920741111@@147.139.210.135@5432@ihlas01
+-- Active: 1689385551112@@127.0.0.1@5432@pijarcamp@public
 DELETE FROM users WHERE id = 26;
 
 SELECT * FROM users;
@@ -22,7 +22,7 @@ CREATE TABLE
 -- buat table recipe
 CREATE TABLE
     recipe(
-        id SERIAL,
+        id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
         ingredients TEXT NOT NULL,
         category VARCHAR ,
@@ -30,6 +30,8 @@ CREATE TABLE
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at timestamp with time zone DEFAULT now()
     );
+    ALTER TABLE recipe ADD COLUMN like_count INT;
+    ALTER TABLE recipe ADD COLUMN saved_count INT;
 
 INSERT INTO recipe(title,ingredients,category,photo,user_id,category_id) VALUES('telur gulung','telur, msg, bihun, saus','appetizer','https://placehold.co/600x400',7,1);
 
@@ -76,3 +78,20 @@ SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, recipe.user_id
 SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, recipe.created_at AS created, category.name AS category,users.name AS author FROM recipe JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id;
 
 -- ,users.name AS users FROM recipe JOIN users ON recipe.user_id = users.id WHERE user_id ILIKE '%1%'
+
+--buat tabel like & bookmark
+CREATE TABLE liked(
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    recipe_id INT NOT NULL
+);
+ALTER TABLE liked ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE liked ADD FOREIGN KEY (recipe_id) REFERENCES recipe(id) ON DELETE CASCADE;
+
+CREATE TABLE bookmark(
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    recipe_id INT NOT NULL
+);
+ALTER TABLE bookmark ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE bookmark ADD FOREIGN KEY (recipe_id) REFERENCES recipe(id) ON DELETE CASCADE;
