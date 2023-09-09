@@ -105,7 +105,7 @@ const updateSavedRecipe = async (count, recipe_id) => {
 const unLikeQuery = async (data) => {
   const { user_id, recipe_id } = data;
   return new Promise((resolve, reject) =>
-    Pool.query(`DELETE FROM like WHERE user_id=${user_id} AND recipe_id=${recipe_id}`, (err, result) => {
+    Pool.query(`DELETE FROM liked WHERE user_id=${user_id} AND recipe_id=${recipe_id}`, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
