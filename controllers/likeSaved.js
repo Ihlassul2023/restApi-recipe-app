@@ -3,12 +3,12 @@ const { StatusCodes } = require("http-status-codes");
 
 const postSave = async (req, res) => {
   const { id } = req.user;
-  const { recipe_id } = req.body;
+  const { recipe_id } = req.params;
   const savedRecipe = await getSavedRecipeQuery(id);
   const isSaved = savedRecipe.rows.filter((recipe) => recipe.recipe_id == recipe_id);
   const data = {
     user_id: id,
-    recipe_id,
+    recipe_id: parseInt(recipe_id),
   };
   if (isSaved.length > 0) {
     await unSaveQuery(data);
@@ -24,11 +24,11 @@ const postSave = async (req, res) => {
 
 const postLike = async (req, res) => {
   const { id } = req.user;
-  const { recipe_id } = req.body;
+  const { recipe_id } = req.params;
   const likedRecipe = await getLikedRecipeQuery(id);
   const data = {
     user_id: id,
-    recipe_id,
+    recipe_id: parseInt(recipe_id),
   };
   const isLiked = likedRecipe.rows.filter((recipe) => recipe.recipe_id == recipe_id);
   if (isLiked.length > 0) {
