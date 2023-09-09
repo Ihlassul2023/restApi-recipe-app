@@ -14,7 +14,7 @@ const postSave = async (req, res) => {
     await unSaveQuery(data);
     let dataRecipeCount = await savedRecipeQueryCount(data);
     await updateSavedRecipe(dataRecipeCount.rows[0].count, recipe_id);
-    res.status(StatusCodes.OK).json({ msg: "anda batal menyimpan resep ini!" });
+    return res.status(StatusCodes.OK).json({ msg: "anda batal menyimpan resep ini!" });
   }
   await savedRecipeQuery(data);
   let dataRecipeCount = await savedRecipeQueryCount(data);
