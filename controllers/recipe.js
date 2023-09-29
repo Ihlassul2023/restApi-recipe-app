@@ -69,7 +69,7 @@ const getRecipeById = async (req, res) => {
   let dataRecipe = await getRecipeByIdQuery(parseInt(id));
   const comment = await getCommentRecipeQuery(parseInt(id));
   if (dataRecipe.rows[0]) {
-    res.status(StatusCodes.OK).json({ msg: "success", data: dataRecipe.rows[0], comment });
+    res.status(StatusCodes.OK).json({ msg: "success", data: dataRecipe.rows[0], comment: comment.rows });
   } else {
     throw new NotFoundError("data tidak ada");
   }
