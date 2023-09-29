@@ -2,7 +2,7 @@ const Pool = require("../db/db");
 const postCommentQuery = async (data) => {
   const { user_id, recipe_id, text } = data;
   return new Promise((resolve, reject) =>
-    Pool.query(`INSERT INTO comment(recipe_id,user_id,text) VALUES(${recipe_id},${user_id},'${text})`, (err, result) => {
+    Pool.query(`INSERT INTO comment(recipe_id,user_id,text) VALUES(${parseInt(recipe_id)},${parseInt(user_id)},'${text})`, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
