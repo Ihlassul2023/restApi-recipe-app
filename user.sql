@@ -1,4 +1,4 @@
--- Active: 1689385551112@@127.0.0.1@5432@pijarcamp@public
+-- Active: 1689920741111@@147.139.210.135@5432@ihlas01
 DELETE FROM users WHERE id = 26;
 
 SELECT * FROM users;
@@ -79,7 +79,7 @@ SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, recipe.created
 
 -- ,users.name AS users FROM recipe JOIN users ON recipe.user_id = users.id WHERE user_id ILIKE '%1%'
 
---buat tabel like & bookmark
+--buat tabel like & bookmark, comment
 CREATE TABLE liked(
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
@@ -95,3 +95,13 @@ CREATE TABLE bookmark(
 );
 ALTER TABLE bookmark ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 ALTER TABLE bookmark ADD FOREIGN KEY (recipe_id) REFERENCES recipe(id) ON DELETE CASCADE;
+
+CREATE TABLE comment(
+    id SERIAL PRIMARY KEY,
+    text VARCHAR,
+    user_id INT NOT NULL,
+    recipe_id INT NOT NULL
+);
+ALTER TABLE comment ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE comment ADD FOREIGN KEY (recipe_id) REFERENCES recipe(id) ON DELETE CASCADE;
+

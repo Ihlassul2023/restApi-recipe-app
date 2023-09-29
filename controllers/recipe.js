@@ -1,4 +1,5 @@
 const { getRecipeAllQuery, getMyRecipeQuery, getRecipeCountQuery, getMyRecipeCountQuery, getRecipeByIdQuery, postRecipeQuery, putRecipeQuery, deleteByIdQuery } = require("../models/recipeModel");
+const { getCommentRecipeQuery } = require("../models/commentModel");
 const { NotFoundError, UnauthenticatedError, BadRequestError } = require("../error");
 const { StatusCodes } = require("http-status-codes");
 const { validationResult } = require("express-validator");
@@ -66,8 +67,9 @@ const getMyRecipe = async (req, res) => {
 const getRecipeById = async (req, res) => {
   const { id } = req.params;
   let dataRecipe = await getRecipeByIdQuery(parseInt(id));
+  const comment = await getCommentRecipeQuery(parseInt(id));
   if (dataRecipe.rows[0]) {
-    res.status(StatusCodes.OK).json({ msg: "success", data: dataRecipe.rows[0] });
+    res.status(StatusCodes.OK).json({ msg: "success", data: dataRecipe.rows[0], comment });
   } else {
     throw new NotFoundError("data tidak ada");
   }

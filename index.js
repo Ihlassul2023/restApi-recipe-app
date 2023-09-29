@@ -19,6 +19,7 @@ const err = require("./middlewares/error-handler");
 const authRouter = require("./routes/userRoute");
 const recipeRouter = require("./routes/recipeRoute");
 const likeSavedRouter = require("./routes/likeSavedRoute");
+const commentRouter = require("./routes/commentRoute");
 const PORT = 5000;
 
 //middleware
@@ -35,6 +36,7 @@ app.use(cors(corsOptions));
 app.use("/auth", authRouter);
 app.use("/recipe", recipeRouter);
 app.use("/likeSaved", likeSavedRouter);
+app.use("/comment", commentRouter);
 app.use(err);
 
 app.listen(PORT, () => {
