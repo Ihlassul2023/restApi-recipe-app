@@ -88,7 +88,7 @@ const putRecipeQuery = async (data) => {
 const getRecipeByIdQuery = async (id) => {
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT recipe.id,recipe.category_id, recipe.title, recipe.ingredients,recipe.like_count,recipe.saved_count, recipe.photo,recipe.public_id, category.name AS category,users.name AS author, users.photo_user FROM recipe JOIN users ON recipe.user_id = users.id  WHERE id=${id}`,
+      `SELECT recipe.id,recipe.category_id, recipe.title, recipe.ingredients,recipe.like_count,recipe.saved_count, recipe.photo,recipe.public_id, category.name AS category,users.name AS author, users.photo_user FROM recipe JOIN users ON recipe.user_id = users.id  WHERE recipe.id=${id}`,
       (err, result) => {
         if (!err) {
           resolve(result);
