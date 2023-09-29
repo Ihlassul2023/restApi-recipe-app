@@ -11,7 +11,7 @@ const postComment = async (req, res) => {
   };
   await postCommentQuery(data);
   let dataRecipeCount = await getCommentQueryCount(data);
-  await updateCommentRecipe(dataRecipeCount.rows[0].count, id);
+  await updateCommentRecipe(dataRecipeCount.rows[0].count, parseInt(id));
   res.status(StatusCodes.OK).json({ msg: "Berhasil terkirim!" });
 };
 
