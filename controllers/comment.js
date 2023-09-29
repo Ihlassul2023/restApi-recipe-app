@@ -1,4 +1,4 @@
-const { postCommentQuery } = require("../models/commentModel");
+const { postCommentQuery, getCommentQueryCount, updateCommentRecipe } = require("../models/commentModel");
 const { StatusCodes } = require("http-status-codes");
 
 const postComment = async (req, res) => {
@@ -10,6 +10,8 @@ const postComment = async (req, res) => {
     recipe_id: id,
   };
   await postCommentQuery(data);
+  let dataRecipeCount = await getCommentQueryCount(data);
+  await updateCommentRecipe(dataRecipeCount.rows[0].count, id);
   res.status(StatusCodes.OK).json({ msg: "Berhasil terkirim!" });
 };
 

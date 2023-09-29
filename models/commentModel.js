@@ -24,7 +24,35 @@ const getCommentRecipeQuery = async (id) => {
   );
 };
 
+const getCommentQueryCount = async (data) => {
+  const { recipe_id } = data;
+  return new Promise((resolve, reject) =>
+    Pool.query(`SELECT COUNT(*) FROM comment WHERE recipe_id = ${parseInt(recipe_id)}`, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    })
+  );
+};
+
+const updateCommentRecipe = async (count, recipe_id) => {
+  console.log("model activate");
+  return new Promise((resolve, reject) =>
+    Pool.query(`UPDATE recipe SET comment_count=${count} WHERE id=${recipe_id}`, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    })
+  );
+};
+
 module.exports = {
   postCommentQuery,
   getCommentRecipeQuery,
+  getCommentQueryCount,
+  updateCommentRecipe,
 };

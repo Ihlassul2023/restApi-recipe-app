@@ -32,6 +32,7 @@ CREATE TABLE
     );
     ALTER TABLE recipe ADD COLUMN like_count INT;
     ALTER TABLE recipe ADD COLUMN saved_count INT;
+    ALTER TABLE recipe ADD COLUMN comment_count INT;
 
 INSERT INTO recipe(title,ingredients,category,photo,user_id,category_id) VALUES('telur gulung','telur, msg, bihun, saus','appetizer','https://placehold.co/600x400',7,1);
 
