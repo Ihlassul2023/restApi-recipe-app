@@ -29,7 +29,7 @@ const savedRecipeQuery = async (data) => {
 const getLikedRecipeQuery = async (id) => {
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT liked.recipe_id,recipe.category_id, recipe.title, recipe.ingredients, recipe.photo,recipe.public_id, category.name AS category,users.name AS author FROM liked JOIN recipe ON liked.recipe_id=recipe.id JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE liked.user_id = ${id}`,
+      `SELECT liked.recipe_id,recipe.category_id, recipe.title, recipe.ingredients,recipe.like_count, recipe.bookmark_count, recipe.comment_count, recipe.photo,recipe.public_id, category.name AS category,users.name AS author FROM liked JOIN recipe ON liked.recipe_id=recipe.id JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE liked.user_id = ${id}`,
       (err, result) => {
         if (!err) {
           resolve(result);
@@ -43,7 +43,7 @@ const getLikedRecipeQuery = async (id) => {
 const getSavedRecipeQuery = async (id) => {
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT bookmark.recipe_id,recipe.category_id, recipe.title, recipe.ingredients, recipe.photo,recipe.public_id, category.name AS category,users.name AS author FROM bookmark JOIN recipe ON bookmark.recipe_id=recipe.id JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE bookmark.user_id = ${id}`,
+      `SELECT bookmark.recipe_id,recipe.category_id, recipe.title, recipe.ingredients, recipe.photo,recipe.public_id,recipe.like_count, recipe.bookmark_count, recipe.comment_count, category.name AS category,users.name AS author FROM bookmark JOIN recipe ON bookmark.recipe_id=recipe.id JOIN category ON recipe.category_id = category.id JOIN users ON recipe.user_id = users.id WHERE bookmark.user_id = ${id}`,
       (err, result) => {
         if (!err) {
           resolve(result);
