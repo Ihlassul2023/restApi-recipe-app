@@ -115,7 +115,7 @@ const updateRecipe = async (req, res) => {
     validationInput({ errors });
   }
   let dataRecipe = await getRecipeByIdQuery(parseInt(id));
-  console.log(dataRecipe.rows);
+  console.log(req.body);
   if (req.user.id == dataRecipe.rows[0].user_id) {
     let result;
     if (req.file) {
