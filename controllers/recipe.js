@@ -1,4 +1,4 @@
-const { getRecipeAllQuery, getMyRecipeQuery, getRecipeCountQuery, getMyRecipeCountQuery, getRecipeByIdQuery, postRecipeQuery, putRecipeQuery, deleteByIdQuery } = require("../models/recipeModel");
+const { getRecipeAllQuery, getAllNewRecipeQuery, getMyRecipeQuery, getRecipeCountQuery, getMyRecipeCountQuery, getRecipeByIdQuery, postRecipeQuery, putRecipeQuery, deleteByIdQuery } = require("../models/recipeModel");
 const { getCommentRecipeQuery } = require("../models/commentModel");
 const { NotFoundError, UnauthenticatedError, BadRequestError } = require("../error");
 const { StatusCodes } = require("http-status-codes");
@@ -20,6 +20,34 @@ const getAllRecipe = async (req, res) => {
     sort: sort || "ASC",
   };
   let dataRecipe = await getRecipeAllQuery(data);
+  let dataRecipeCount = await getRecipeCountQuery(data);
+
+  let pagination = {
+    totalPage: Math.ceil(dataRecipeCount.rows[0].count / limiter),
+    totalData: parseInt(dataRecipeCount.rows[0].count),
+    pageNow: parseInt(page),
+  };
+
+  if (dataRecipe.rows.length != 0) {
+    res.status(StatusCodes.OK).json({ msg: "success", data: dataRecipe.rows, pagination });
+  } else {
+    throw new NotFoundError("data tidak ada");
+  }
+};
+const getAllNewRecipe = async (req, res) => {
+  const { search, searchBy, limit, sort } = req.query;
+
+  let page = req.query.page || 1;
+  let limiter = limit || 5;
+
+  data = {
+    search: search || "",
+    searchBy: searchBy || "title",
+    offset: (page - 1) * limiter,
+    limit: limit || 5,
+    sort: sort || "ASC",
+  };
+  let dataRecipe = await getAllNewRecipeQuery(data);
   let dataRecipeCount = await getRecipeCountQuery(data);
 
   let pagination = {
@@ -168,6 +196,7 @@ const deleteRecipe = async (req, res) => {
 
 module.exports = {
   getAllRecipe,
+  getAllNewRecipe,
   getMyRecipe,
   getRecipeById,
   createRecipe,

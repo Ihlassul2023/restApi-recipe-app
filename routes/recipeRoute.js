@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { check } = require("express-validator");
-const { getAllRecipe, getMyRecipe, getRecipeById, createRecipe, updateRecipe, deleteRecipe } = require("../controllers/recipe");
+const { getAllRecipe, getMyRecipe, getRecipeById, createRecipe, updateRecipe, deleteRecipe, getAllNewRecipe } = require("../controllers/recipe");
 const { authenticateUser } = require("../middlewares/authentication");
 const multer = require("multer");
 const path = require("path");
@@ -26,6 +26,7 @@ router
     createRecipe
   );
 router.route("/myRecipe").get(authenticateUser, getMyRecipe);
+router.route("/newRecipe").get(getAllNewRecipe);
 
 router.route("/:id").get(getRecipeById).put(authenticateUser, upload.single("photo"), updateRecipe).delete(authenticateUser, deleteRecipe);
 
