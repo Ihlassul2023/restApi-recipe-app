@@ -15,7 +15,7 @@ const postCommentQuery = async (data) => {
 
 const getCommentRecipeQuery = async (id) => {
   return new Promise((resolve, reject) =>
-    Pool.query(`SELECT users.name, users.photo_user, comment.text FROM comment JOIN users ON comment.user_id=users.id WHERE comment.recipe_id=${id} `, (err, result) => {
+    Pool.query(`SELECT comment.id, comment.user_id, users.name, users.photo_user, comment.text FROM comment JOIN users ON comment.user_id=users.id WHERE comment.recipe_id=${id} `, (err, result) => {
       if (!err) {
         resolve(result);
       } else {
@@ -50,10 +50,23 @@ const updateCommentRecipe = async (count, recipe_id) => {
     })
   );
 };
+const deleteCommentByIdQuery = async (data) => {
+  const { user_id, comment_id } = data;
+  return new Promise((resolve, reject) =>
+    Pool.query(`DELETE FROM comment WHERE user_id=${user_id} AND id=${comment_id}`, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    })
+  );
+};
 
 module.exports = {
   postCommentQuery,
   getCommentRecipeQuery,
   getCommentQueryCount,
   updateCommentRecipe,
+  deleteCommentByIdQuery,
 };
