@@ -26,10 +26,10 @@ const register = async (req, res) => {
   let hashPass = await hashPassword(password);
   let uuid = uuidv4();
   req.body.password = hashPass;
-  req.body.isVerified = true;
+  req.body.isVerified = false;
   req.body.checker = uuid;
   await registerQuery(req.body);
-  // await sendVerificationEmail({ name, uuid, email });
+  await sendVerificationEmail({ name, uuid, email });
   res.status(StatusCodes.CREATED).json({ msg: "sukses terdaftar" });
 };
 const verifyEmail = async (req, res) => {
@@ -47,23 +47,22 @@ const login = async (req, res) => {
   let result = await loginQuery({ email });
   if (result.rows.length > 0) {
     const user = result.rows[0];
-    const isMatch = await comparePassword({ passReq: password, passData: user.password, res });
-    if (isMatch) {
-      const payload = {
-        id: user.id,
-        name: user.name,
-        role: user.role,
-      };
-      const token = createAccessToken({ payload });
-      return res.status(StatusCodes.OK).json({ user, msg: "Login Sukes!", token });
+    if (user.isverified) {
+      const isMatch = await comparePassword({ passReq: password, passData: user.password, res });
+      if (isMatch) {
+        const payload = {
+          id: user.id,
+          name: user.name,
+          role: user.role,
+        };
+        const token = createAccessToken({ payload });
+        return res.status(StatusCodes.OK).json({ user, msg: "Login Sukes!", token });
+      } else {
+        throw new UnauthenticatedError("password salah!");
+      }
     } else {
-      throw new UnauthenticatedError("password salah!");
+      throw new UnauthenticatedError("akun belum terverifikasi silahkan cek email!");
     }
-    // if (user.isverified) {
-
-    // } else {
-    //   throw new UnauthenticatedError("akun belum terverifikasi silahkan cek email!");
-    // }
   } else {
     throw new NotFoundError("pengguna tidak ditemukan atau email salah!");
   }

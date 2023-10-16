@@ -1,5 +1,5 @@
 module.exports = {
-  host: "smtp.zoho.com",
+  host: process.env.HOST_NODEMAILER,
   port: process.env.PORT_NODEMAILER,
   secure: true,
   auth: {
